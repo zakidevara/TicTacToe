@@ -27,10 +27,12 @@
 #define STDBACKGROUND 159
 
 const int O = 0, X = 1, kosong = 3;
-const int hard = 3, normal = 4;
 void menu();
-void permainanKomputer(const int);
+void permainanKomputer(int);
 void permainanPlayer();
+bool cekInputRange(int,int,int);
+bool cekInputInteger(char*);
+
 
 void warnateks(int warna) //modul yang berfungsi untuk memberi warna ke karakter
 {
@@ -166,14 +168,14 @@ void judul()//sebagai tampilan awal program
 	gotoxy(61,23); printf("    ÛÛÛÛ \n");	
 }
 
-void kecepatan(float seconds){
+void jedaWaktu(float seconds){//memberi jeda waktu dalam satuan detik
 	clock_t endwait;
 	endwait=clock()+seconds*CLOCKS_PER_SEC;
 	while(clock()<endwait){};
 }
 
 void loading()//modul untuk menapilkan tampilan loading
-{ 
+{
 	int x = 28, y = 13, n;
 	warnateks(WHITE);
 	gotoxy(x,20); printf("       Please Wait");
@@ -181,18 +183,18 @@ void loading()//modul untuk menapilkan tampilan loading
 	gotoxy(x,22);printf("º                        º");
 	gotoxy(x,23);printf("ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼");
 	for(n=29;n<=50;n++){
-		gotoxy(n,22);printf("Û");
-		kecepatan(0.1);
+		gotoxy(n,22);printf("?");
+		jedaWaktu(0.1);
 	};
 }
 
-void welcome_screen(){
+void welcome_screen(){//tampilan saat program pertama dijalankan
 	gotoxy(22,28); printf(" Created By : Moh. Dwi, Rangga R, Silvi \n");
 	judul();
 	loading();
 }
 
-void aboutus(){//menampilkan file creator.txt
+void aboutus(){//menampilkan file creator.txt tentang pembuat game
 	FILE *creator;
 	char creat[panjang];
 
@@ -209,7 +211,7 @@ void aboutus(){//menampilkan file creator.txt
 	menu();
 }
 
-void instructions(){//mmenampilkan file instruksi.txt
+void instructions(){//mmenampilkan file instruksi.txt tentang cara bermain game
 	FILE *instruksi;
 	char instruk[panjang];
 
@@ -228,7 +230,11 @@ void instructions(){//mmenampilkan file instruksi.txt
 
 void menu() //modul untuk menampilkan main menu dari program
 {
-	int pilih_menu, i = 28;
+	int i = 28;
+	int normal=1;
+	int hard=2;
+	char pilih_menu[3];
+
 	judul();
 	warnateks(WHITE);
 	gotoxy(i,18); printf(" ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»\n");
@@ -241,22 +247,32 @@ void menu() //modul untuk menampilkan main menu dari program
    	gotoxy(i,25);printf(" º                       º\n");
    	gotoxy(i,26);printf(" ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼\n");
 	gotoxy(i,28);printf("    Choose :            \n");
-   	gotoxy(41,28);scanf("%d",&pilih_menu);
-   	switch(pilih_menu){
+   	gotoxy(41,28);scanf("%s",pilih_menu);
+   	if(!cekInputInteger(pilih_menu)){
+        gotoxy(i,30);printf("Input harus berupa integer");
+        strcpy(pilih_menu,"99");
+    }
+
+   	switch(atoi(pilih_menu)){
 			case 1:
 				system("CLS");
 				gotoxy(i,18);printf(" ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»\n");
-   				gotoxy(i,19);printf(" º      MODE MAIN        º\n");
+   				gotoxy(i,19);printf(" º      PLAY MODE        º\n");
    				gotoxy(i,20);printf(" º                       º\n");
    				gotoxy(i,21);printf(" º   [1] VS COMPUTER     º\n");
    				gotoxy(i,22);printf(" º   [2] VS PLAYER       º\n");
    				gotoxy(i,23);printf(" º                       º\n");
    				gotoxy(i,24);printf(" ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼\n");
 				gotoxy(i,25);printf("    Choose :            \n");
-   				gotoxy(41,25);scanf("%d",&pilih_menu);
-                		switch(pilih_menu){
-                 		   case 1 : system("CLS");
-                        		gotoxy(i,18);printf(" ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»\n");
+   				gotoxy(41,25);scanf("%s",pilih_menu);
+   				if(!cekInputInteger(pilih_menu)){
+                    gotoxy(i,30);printf("Input harus berupa integer");
+                    strcpy(pilih_menu,"99");
+                }
+
+                switch(atoi(pilih_menu)){
+                    case 1 : system("CLS");
+                        gotoxy(i,18);printf(" ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»\n");
    					gotoxy(i,19);printf(" º     BOT DIFFICULTY    º\n");
    					gotoxy(i,20);printf(" º                       º\n");
    					gotoxy(i,21);printf(" º   [1] NORMAL          º\n");
@@ -264,16 +280,20 @@ void menu() //modul untuk menampilkan main menu dari program
    					gotoxy(i,23);printf(" º                       º\n");
    					gotoxy(i,24);printf(" ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼\n");
 					gotoxy(i,25);printf("    Choose :            \n");
-   					gotoxy(41,25);scanf("%d",&pilih_menu);
-                       			switch(pilih_menu){
-                           		 	case 1 : permainanKomputer(normal);break;
-                            			case 2 : permainanKomputer(hard);break;
-                            			default: menu();break;
-                        		}
-                    	case 2 : permainanPlayer();break;
-                    	default : menu();break;
-                }
+   						gotoxy(41,25);scanf("%s",pilih_menu);
+   						if(!cekInputInteger(pilih_menu)){
+                            gotoxy(i,30);printf("Input harus berupa integer");
+                            strcpy(pilih_menu,"99");
+                        }
 
+                        switch(atoi(pilih_menu)){
+                            case 1 : permainanKomputer(normal);break;
+                            case 2 : permainanKomputer(hard);break;
+                            default: menu();gotoxy(i,27);printf("Menu tidak tersedia");break;
+                        }
+                    case 2 : permainanPlayer();break;
+                    default : menu();gotoxy(i,27);printf("Menu tidak tersedia");break;
+                }
 			break;
 
 			case 2:
@@ -291,12 +311,12 @@ void menu() //modul untuk menampilkan main menu dari program
 			break;
 
 			default:
-				menu();
+				menu();gotoxy(i,30);printf("Menu tidak tersedia");
 			break;
 	 }
 }
 
-int cek_h1(int kotak_a, const int *board, const int giliran, const int j){
+int cek_h1(int kotak_a, const int *board, const int simbol, const int j){//modul untuk mengecek jml simbol secara horizontal ke kanan
 	int ketemu = 0;
 	int k = kotak_a + j;
 	while( true ){
@@ -304,7 +324,7 @@ int cek_h1(int kotak_a, const int *board, const int giliran, const int j){
 			break;
 		}
 
-		if ( board[k] != giliran || k > 24 || ketemu == 3){
+		if ( board[k] != simbol || k > 24 || ketemu == 3){
 			break;
 		}else{
             ketemu++;
@@ -315,7 +335,7 @@ int cek_h1(int kotak_a, const int *board, const int giliran, const int j){
 	return ketemu;
 }
 
-int cek_h2(int kotak_a, const int *board, const int giliran, const int j){
+int cek_h2(int kotak_a, const int *board, const int simbol, const int j){//modul untuk mengecek jml simbol secara horizontal ke kiri
 	int ketemu = 0;
 	int k = kotak_a + j;
 	while( k >= 0){
@@ -323,7 +343,7 @@ int cek_h2(int kotak_a, const int *board, const int giliran, const int j){
 			break;
 		}
 
-		if ( board[k] != giliran || ketemu == 3 || kotak_a % 5 == 0){
+		if ( board[k] != simbol || ketemu == 3 || kotak_a % 5 == 0){
 			break;
 		}else{
 			ketemu++;
@@ -335,11 +355,11 @@ int cek_h2(int kotak_a, const int *board, const int giliran, const int j){
 	return ketemu;
 }
 
-int cek_v(int kotak_a, const int *board, const int giliran, const int j){
+int cek_v(int kotak_a, const int *board, const int simbol, const int j){//modul untuk mengecek jml simbol secara vertikal
 	int ketemu = 0;
 	int k = kotak_a + j;
 	while(k >= 0 && k <= 24){
-		if ( board[k] != giliran || ketemu == 3){
+		if ( board[k] != simbol || ketemu == 3){
 			break;
 		}else{
 			ketemu++;
@@ -350,11 +370,11 @@ int cek_v(int kotak_a, const int *board, const int giliran, const int j){
 	return ketemu;
 }
 
-int cek_d(int kotak_a, const int *board, const int giliran, const int j, const int m, const int n){
+int cek_d(int kotak_a, const int *board, const int simbol, const int j, const int m, const int n){//modul untuk mengecek jml simbol secara diagonal
 	int ketemu = 0;
 	int k = kotak_a + j;
 	while(k >= m && k <= n){
-		if ( board[k] != giliran || ketemu == 3){
+		if ( board[k] != simbol || ketemu == 3){
 			break;
 		}else{
 			ketemu++;
@@ -363,8 +383,6 @@ int cek_d(int kotak_a, const int *board, const int giliran, const int j, const i
 	}
 	return ketemu;
 }
-
-
 
 int cek_status_max(const int *board, const int n_kotak, const int simbol)//modul untuk mengecek jumlah simbol berderet paling banyak jika n_kotak diisi oleh parameter simbol
 {
@@ -513,55 +531,53 @@ int generateAngka(int *board, const int simbol, const int jumlah)//modul untuk m
 	return no_kotak;
 }
 
-int cek_draw(const int *board)//modul untuk mengecek apakah permainan draw atau tidak
+bool cek_draw(const int *board)//modul untuk mengecek apakah permainan draw atau tidak
 {
 	int i=0;
 	for(i=0; i<25; i++){
 		if(board[i] == kosong)
-		return 1;
+		return false;
 	}
-	return 0;
+	return true;
+}
+bool cekInputInteger(char input[3]){//mengecek apakah input berupa integer atau tidak
+    for(int i = 0; i < strlen(input);i++){
+        if(input[i] < '0' || input[i] > '9'){
+            return false;
+        }
+    }
+    return true;
 }
 
-int input_user(const int *board)//modul untuk memproses inputan langkah dari user pada saat permainan
+bool cekInputRange(int input,int nilaiMin, int nilaiMax){//mengecek apakah input berada di range nilaiMin dan nilaiMax atau tidak
+    if (input < nilaiMin || input > nilaiMax){
+        return false;
+    }else{
+        return true;
+    }
+}
+
+int input_permainan(const int *board)//modul untuk memproses inputan langkah dari user pada saat permainan
 {
-	//char userinput[12];
-	warnateks(WHITE);
-	int keluar = 0;
 	char pilih_kotak_string[3];
-	int pilih_kotak=-1;
-	while (keluar == 0) {
+	int pilih_kotak;
+
+	do{
 		printf("\n\n\n\t\t\tMasukan nomor kotak (1-25) :");
-		label2 :
 		scanf("%s", pilih_kotak_string);
+		pilih_kotak=atoi(pilih_kotak_string)-1;
+
         if(strlen(pilih_kotak_string) > 3 ){
-            printf("\n\t\t\tTerlalu banyak character yang diinput\n");
-            continue;
+            printf("\n\t\t\tInput harus kurang dari 3 karakter\n");
+        }else if(!cekInputInteger(pilih_kotak_string)){
+            printf("\n\t\t\tInput harus berupa integer\n");
+		}else if(!cekInputRange(pilih_kotak+1,1,25)){
+            printf("\n\t\t\tNomor yang anda masukan harus ada di range %d - %d\n",1,25);
+		}else if( board[pilih_kotak] != kosong ){
+            printf("\n\t\t\tKotak tersebut sudah terisi, pilih kotak lain ");
         }
-        for(int i = 0; i < 3;i++){
-            if(pilih_kotak_string[i] < '0' || pilih_kotak_string[i] > '9'){
-                printf("\n\t\t\tInput harus berupa integer 1-25\n");
-                break;
-            }
-        }
+	}while(!cekInputInteger(pilih_kotak_string) || !cekInputRange(pilih_kotak+1,1,25)|| board[pilih_kotak] != kosong||strlen(pilih_kotak_string)>3);
 
-		pilih_kotak = atoi(pilih_kotak_string);
-
-		if (pilih_kotak < 1 || pilih_kotak > 25){
-			pilih_kotak = -1;
-			printf("\n\t\t\tNomor yang anda masukan salah\n");
-			continue;
-		}
-
-		pilih_kotak--;
-		if( board[pilih_kotak] != kosong ){
-			pilih_kotak=-1;
-			printf("\n\t\t\tKotak tersebut sudah terisi, pilih kotak lain : ");
-			continue;
-		}
-		//if(pilih_kotak>1 || pilih_kotak)
-		keluar=1;
-	}
 	return pilih_kotak;
 }
 
@@ -570,9 +586,12 @@ void isi_kotak(int *board,const int no_kotak,const int giliran)//modul untuk men
 	board[no_kotak] = giliran;
 }
 
-int gilirankomputer( int *board, const int _giliran,const int tingkat)//modul yang berfungsi untuk menentukan langkah komputer
+int gilirankomputer( int *board, const int _giliran,int tingkat)//modul yang berfungsi untuk menentukan langkah komputer
 {
 	int i = 0, nomor_kotak = 0;
+	int normal = 1;
+	int hard = 2;
+
     if(tingkat == normal){//memprioritaskan menang kemudian block
         nomor_kotak = generateAngka(board, _giliran, 4);
         if(nomor_kotak != -1){
@@ -607,7 +626,6 @@ int gilirankomputer( int *board, const int _giliran,const int tingkat)//modul ya
         }
     }
 
-
 	nomor_kotak = 0;
 	int nomor_kotak_kosong = 0;
 	int kotak_tersedia[25];
@@ -622,7 +640,7 @@ int gilirankomputer( int *board, const int _giliran,const int tingkat)//modul ya
 	return kotak_tersedia[nomor_kotak];
 }
 
-void permainanKomputer(const int tingkat)//modul yang berfungsi untuk menentukan dan mengatur jalannya permainan vs komputer
+void permainanKomputer(int tingkat)//modul yang berfungsi untuk menentukan dan mengatur jalannya permainan vs komputer
 {
 	int board[25];
 	int game_over = 0, giliran = O, no_kotak = -1;
@@ -632,7 +650,7 @@ void permainanKomputer(const int tingkat)//modul yang berfungsi untuk menentukan
 		system("cls");
 		tampilan_board(&board[0]);
 		if(giliran == O){
-			no_kotak = input_user(&board[0]);
+			no_kotak = input_permainan(&board[0]);
 			isi_kotak(&board[0],no_kotak,giliran);
 		}else{
 			no_kotak = gilirankomputer(&board[0], giliran, tingkat);
@@ -668,7 +686,7 @@ void permainanKomputer(const int tingkat)//modul yang berfungsi untuk menentukan
             }
 		}
 
-		if(cek_draw(board) == 0) {
+		if(cek_draw(board)) {
 			int j = -1;
 			game_over = 1;
 			system("cls");
@@ -707,7 +725,7 @@ void permainanPlayer()//modul yang berfungsi untuk menentukan dan mengatur jalan
             printf("\n\n\t\t\t\tGiliran Player O ");
 
             warnateks(WHITE);
-			no_kotak = input_user(&board[0]);
+			no_kotak = input_permainan(&board[0]);
 			isi_kotak(&board[0],no_kotak,giliran);
 			tampilan_board(&board[0]);
 		}else{
@@ -715,7 +733,7 @@ void permainanPlayer()//modul yang berfungsi untuk menentukan dan mengatur jalan
             printf("\n\n\t\t\t\tGiliran Player X ");
 
             warnateks(WHITE);
-			no_kotak = input_user(&board[0]);
+			no_kotak = input_permainan(&board[0]);
 			isi_kotak(&board[0], no_kotak, giliran);
             tampilan_board(&board[0]);
 		}
@@ -748,7 +766,7 @@ void permainanPlayer()//modul yang berfungsi untuk menentukan dan mengatur jalan
             }
 		}
 
-		if(cek_draw(board) == 0) {
+		if(cek_draw(board)) {
 			int j = -1;
 			game_over = 1;
 			system("cls");
