@@ -27,69 +27,69 @@
 #define STDBACKGROUND 159
 
 const int O = 0, X = 1, kosong = 3;
-const int tengah[3] = {4,12,24};
+const int hard = 3, normal = 4;
 void menu();
-void permainan();
+void permainanKomputer(const int);
+void permainanPlayer();
 
 void warnateks(int warna) //modul yang berfungsi untuk memberi warna ke karakter
-{ 
-	HANDLE hConsole; 
+{
+	HANDLE hConsole;
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hConsole, warna);
 }
 
 void inisialisasi(int *board) //modul untuk memberi nilai awal ke array board
-{ 
+{
 	int i = 0;
 	for(i=0; i<25; i++){
 		board[i]=kosong;
 	}
 }
 
-
 void gotoxy(int x, int y) //modul untuk memfungsikan fungsi gotoxy
-{ 
-	HANDLE hConsoleOutput;  
-	COORD dwCursorPosition;  
-	dwCursorPosition.X = x;  
-	dwCursorPosition.Y = y;  
-	hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);  
-	SetConsoleCursorPosition(hConsoleOutput,dwCursorPosition);   
+{
+	HANDLE hConsoleOutput;
+	COORD dwCursorPosition;
+	dwCursorPosition.X = x;
+	dwCursorPosition.Y = y;
+	hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleCursorPosition(hConsoleOutput,dwCursorPosition);
 }
 
-void xo(){
+void xo(){ //memberi logo x dan o
 	warnateks(LIGHT_GREEN);
-	gotoxy(9,8); printf("ÛÛ       ÛÛ \n");
-	gotoxy(9,9); printf("  ÛÛ   ÛÛ \n");
-	gotoxy(9,10); printf("    ÛÛÛ \n");
-	gotoxy(9,11); printf("    ÛÛÛ \n");
-	gotoxy(9,12); printf("  ÛÛ   ÛÛ \n");
-	gotoxy(9,13); printf("ÛÛ       ÛÛ \n");	
+	gotoxy(9,8); printf("??       ?? \n");
+	gotoxy(9,9); printf("  ??   ?? \n");
+	gotoxy(9,10); printf("    ??? \n");
+	gotoxy(9,11); printf("    ??? \n");
+	gotoxy(9,12); printf("  ??   ?? \n");
+	gotoxy(9,13); printf("??       ?? \n");
 	gotoxy(9,15);printf(" COMPUTER \n");
 	warnateks(YELLOW);
-	gotoxy(61,8); printf("    ÛÛÛÛ  \n");
-	gotoxy(61,9); printf("  ÛÛ    ÛÛ \n");
-	gotoxy(61,10); printf("  ÛÛ    ÛÛ \n");
-	gotoxy(61,11); printf("  ÛÛ    ÛÛ \n");
-	gotoxy(61,12); printf("  ÛÛ    ÛÛ \n");
-	gotoxy(61,13); printf("    ÛÛÛÛ \n");
-	gotoxy(61,15);printf("    USER   \n");	
+	gotoxy(61,8); printf("    ????  \n");
+	gotoxy(61,9); printf("  ??    ?? \n");
+	gotoxy(61,10); printf("  ??    ?? \n");
+	gotoxy(61,11); printf("  ??    ?? \n");
+	gotoxy(61,12); printf("  ??    ?? \n");
+	gotoxy(61,13); printf("    ???? \n");
+	gotoxy(61,15);printf("    USER   \n");
 }
 
 void tampilan_board(const int *board) //modul untuk menampilkan array board ke layar
-{ 
+{
 	int i = 0;
 	char kar[] = "OX|_";
 	xo();
 	for(i=0; i<25; i++){
-		if(i!=0 && i%5==0){ 
+		if(i!=0 && i%5==0){
 			printf("\n\n\n"); //memberi spasi untuk setiap baris
 		}
-		
+
 		if(i%5 == 0){
 			printf("\t\t\t");
 		}
-		
+
 		if(board[i] == 0){
 			warnateks(YELLOW); //memberi warna kuning ke karakter "O"
 			printf("%6c", kar[board[i]]);
@@ -106,7 +106,7 @@ void tampilan_board(const int *board) //modul untuk menampilkan array board ke l
 void tampilan_board_akhir(const int *board) //menampilkan kondisi array board terakhir setelah permainan selesai
 {
 	int i=0;
-	char kar[] = "OX|_"; 
+	char kar[] = "OX|_";
 	printf("\n\n");
 	warnateks(LIGHT_GREEN);
 	xo();
@@ -114,11 +114,11 @@ void tampilan_board_akhir(const int *board) //menampilkan kondisi array board te
 		if(i!=0 && i%5==0){
 			printf("\n\n\n");
 		}
-		
+
 		if(i%5 == 0){
 			printf("\t\t\t");
 		}
-		
+
 		if(board[i] == 0){
 			warnateks(YELLOW);
 			printf("%6c", kar[board[i]]);
@@ -130,124 +130,152 @@ void tampilan_board_akhir(const int *board) //menampilkan kondisi array board te
 			printf("%6c", kar[board[i]]);
 		}
 	}
-	printf("\n\n");	
+	printf("\n\n");
 }
 
 void judul()//sebagai tampilan awal program
-{ 
+{
 	warnateks(LIGHT_BLUE);
-	gotoxy(8,1); printf("  ÛÛÛÛÛÛÛÛÛÛ  ÛÛ   ÛÛÛÛÛ             ÛÛÛÛÛÛÛÛÛÛ   ÛÛÛÛ    ÛÛÛÛÛ \n");
-	printf("              ÛÛ      ÛÛ  ÛÛ                     ÛÛ      ÛÛ  ÛÛ  ÛÛ     \n");
-	printf("              ÛÛ      ÛÛ  ÛÛ                     ÛÛ      ÛÛ  ÛÛ  ÛÛ     \n");
-	printf("              ÛÛ      ÛÛ  ÛÛ                     ÛÛ      ÛÛÛÛÛÛ  ÛÛ     \n");
-	printf("              ÛÛ      ÛÛ  ÛÛ                     ÛÛ      ÛÛ  ÛÛ  ÛÛ     \n");
-	printf("              ÛÛ      ÛÛ   ÛÛÛÛÛ                 ÛÛ      ÛÛ  ÛÛ   ÛÛÛÛÛ \n \n\n\n");
-	
-	printf("      		           ÛÛÛÛÛÛÛÛÛÛ  ÛÛÛÛÛ   ÛÛÛÛÛ \n");
-	printf("	 	               ÛÛ     ÛÛ   ÛÛ  Û     \n");
-	printf("		               ÛÛ     ÛÛ   ÛÛ  ÛÛÛÛÛ \n");
-	printf("		               ÛÛ     ÛÛ   ÛÛ  Û \n");
-	printf("                               ÛÛ     ÛÛ   ÛÛ  Û     \n");
-	printf("		               ÛÛ      ÛÛÛÛÛ   ÛÛÛÛÛ \n");
-	
+	gotoxy(8,1); printf("  ??????????  ??   ?????             ??????????   ????    ????? \n");
+	printf("              ??      ??  ??                     ??      ??  ??  ??     \n");
+	printf("              ??      ??  ??                     ??      ??  ??  ??     \n");
+	printf("              ??      ??  ??                     ??      ??????  ??     \n");
+	printf("              ??      ??  ??                     ??      ??  ??  ??     \n");
+	printf("              ??      ??   ?????                 ??      ??  ??   ????? \n \n\n\n");
+
+	printf("      		           ??????????  ?????   ????? \n");
+	printf("	 	               ??     ??   ??  ?     \n");
+	printf("		               ??     ??   ??  ????? \n");
+	printf("		               ??     ??   ??  ? \n");
+	printf("                               ??     ??   ??  ?     \n");
+	printf("		               ??      ?????   ????? \n");
+
 	warnateks(LIGHT_GREEN);
-	gotoxy(9,18); printf("ÛÛ       ÛÛ \n");
-	gotoxy(9,19); printf("  ÛÛ   ÛÛ \n");
-	gotoxy(9,20); printf("    ÛÛÛ \n");
-	gotoxy(9,21); printf("    ÛÛÛ \n");
-	gotoxy(9,22); printf("  ÛÛ   ÛÛ \n");
-	gotoxy(9,23); printf("ÛÛ       ÛÛ \n");	
+	gotoxy(9,18); printf("??       ?? \n");
+	gotoxy(9,19); printf("  ??   ?? \n");
+	gotoxy(9,20); printf("    ??? \n");
+	gotoxy(9,21); printf("    ??? \n");
+	gotoxy(9,22); printf("  ??   ?? \n");
+	gotoxy(9,23); printf("??       ?? \n");
 	warnateks(YELLOW);
-	gotoxy(61,18); printf("    ÛÛÛÛ  \n");
-	gotoxy(61,19); printf("  ÛÛ    ÛÛ \n");
-	gotoxy(61,20); printf("  ÛÛ    ÛÛ \n");
-	gotoxy(61,21); printf("  ÛÛ    ÛÛ \n");
-	gotoxy(61,22); printf("  ÛÛ    ÛÛ \n");
-	gotoxy(61,23); printf("    ÛÛÛÛ \n");	
+	gotoxy(61,18); printf("    ????  \n");
+	gotoxy(61,19); printf("  ??    ?? \n");
+	gotoxy(61,20); printf("  ??    ?? \n");
+	gotoxy(61,21); printf("  ??    ?? \n");
+	gotoxy(61,22); printf("  ??    ?? \n");
+	gotoxy(61,23); printf("    ???? \n");
 }
 
-void kecepatan(float seconds){
+void kecepatan(float seconds){// memberi interval waktu dalam satuan detik
 	clock_t endwait;
 	endwait=clock()+seconds*CLOCKS_PER_SEC;
 	while(clock()<endwait){};
 }
 
 void loading()//modul untuk menapilkan tampilan loading
-{ 
+{
 	int x = 28, y = 13, n;
 	warnateks(WHITE);
 	gotoxy(x,20); printf("       Please Wait");
-	gotoxy(x,21);  printf("ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»");
-	gotoxy(x,22);printf("º                        º");
-	gotoxy(x,23);printf("ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼");
+	gotoxy(x,21);  printf("??????????????????????????");
+	gotoxy(x,22);printf("?                        ?");
+	gotoxy(x,23);printf("??????????????????????????");
 	for(n=29;n<=50;n++){
-		gotoxy(n,22);printf("Û");
+		gotoxy(n,22);printf("?");
 		kecepatan(0.1);
 	};
 }
 
-void welcome_screen(){
+void welcome_screen(){// menampilkan tampilan awal dijalankannya program
 	gotoxy(22,28); printf(" Created By : Moh. Dwi, Rangga R, Silvi \n");
 	judul();
 	loading();
 }
 
-void aboutus(){
+void aboutus(){//menampilkan file creator.txt
 	FILE *creator;
 	char creat[panjang];
-	
+
 	creator = fopen("creator.txt", "rt");
 	while((fgets(creat, panjang, creator))!= NULL){
 		printf("%s\r", creat);
 	}
-	
+
 	fclose(creator);
 
-	
+
 	gotoxy(22,25); printf("   Press Any Key To Return.....");getch();
 	system("CLS");
 	menu();
 }
 
-void instructions(){
+void instructions(){//mmenampilkan file instruksi.txt
 	FILE *instruksi;
 	char instruk[panjang];
-	
+
 	instruksi = fopen("instruksi.txt", "rt");
 	while((fgets(instruk, panjang, instruksi))!= NULL){
 		printf("%s\r", instruk);
 	}
-	
+
 	fclose(instruksi);
 
-	
+
 	gotoxy(22,25); printf("   Press Any Key To Return.....");getch();
 	system("CLS");
 	menu();
 }
 
 void menu() //modul untuk menampilkan main menu dari program
-{ 
+{
 	int pilih_menu, i = 28;
 	judul();
 	warnateks(WHITE);
-	gotoxy(i,18); printf(" ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»\n");
-   	gotoxy(i,19);printf(" º      MAIN MENU        º\n");
-   	gotoxy(i,20);printf(" º                       º\n");
-   	gotoxy(i,21);printf(" º   [1] PLAY NOW !      º\n");
-   	gotoxy(i,22);printf(" º   [2] INSTRUCTIONS    º\n");
-   	gotoxy(i,23);printf(" º   [3] THE CREATOR     º\n");
-   	gotoxy(i,24);printf(" º   [0] Exit            º\n");
-   	gotoxy(i,25);printf(" º                       º\n");
-   	gotoxy(i,26);printf(" ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼\n");
+	gotoxy(i,18); printf(" ?????????????????????????\n");
+   	gotoxy(i,19);printf(" ?      MAIN MENU        ?\n");
+   	gotoxy(i,20);printf(" ?                       ?\n");
+   	gotoxy(i,21);printf(" ?   [1] PLAY NOW !      ?\n");
+   	gotoxy(i,22);printf(" ?   [2] INSTRUCTIONS    ?\n");
+   	gotoxy(i,23);printf(" ?   [3] THE CREATOR     ?\n");
+   	gotoxy(i,24);printf(" ?   [0] Exit            ?\n");
+   	gotoxy(i,25);printf(" ?                       ?\n");
+   	gotoxy(i,26);printf(" ?????????????????????????\n");
 	gotoxy(i,28);printf("    Choose :            \n");
    	gotoxy(41,28);scanf("%d",&pilih_menu);
    	switch(pilih_menu){
 			case 1:
 				system("CLS");
-				permainan();
+				gotoxy(i,18);printf(" ?????????????????????????\n");
+   				gotoxy(i,19);printf(" ?      MODE MAIN        ?\n");
+   				gotoxy(i,20);printf(" ?                       ?\n");
+   				gotoxy(i,21);printf(" ?   [1] VS COMPUTER     ?\n");
+   				gotoxy(i,22);printf(" ?   [2] VS PLAYER       ?\n");
+   				gotoxy(i,23);printf(" ?                       ?\n");
+   				gotoxy(i,24);printf(" ?????????????????????????\n");
+				gotoxy(i,25);printf("    Choose :            \n");
+   				gotoxy(41,25);scanf("%d",&pilih_menu);
+                switch(pilih_menu){
+                    case 1 : system("CLS");
+                        gotoxy(i,18);printf(" ?????????????????????????\n");
+   						gotoxy(i,19);printf(" ?      DIFFICULTY       ?\n");
+   						gotoxy(i,20);printf(" ?                       ?\n");
+   						gotoxy(i,21);printf(" ?   [1] NORMAL   	     ?\n");
+   						gotoxy(i,22);printf(" ?   [2] HARD            ?\n");
+   						gotoxy(i,23);printf(" ?                       ?\n");
+   						gotoxy(i,24);printf(" ?????????????????????????\n");
+						gotoxy(i,25);printf("    Choose :            \n");
+   						gotoxy(41,25);scanf("%d",&pilih_menu);
+                        switch(pilih_menu){
+                            case 1 : permainanKomputer(normal);break;
+                            case 2 : permainanKomputer(hard);break;
+                            default: menu();break;
+                        }
+                    case 2 : permainanPlayer();break;
+                    default : menu();break;
+                }
+
 			break;
-			
+
 			case 2:
 				system("CLS");
 				instructions();
@@ -267,46 +295,48 @@ void menu() //modul untuk menampilkan main menu dari program
 			break;
 	 }
 }
-	
-int cek_h1(int kotak_a, const int *board, const int giliran, const int j){
-	int status1 = 0, ketemu = 0; 
-	int k = kotak_a + j;
-	while( status1 == 0){
+
+int cek_h1(int kotak_a, const int *board, const int giliran){//cek horizontal di kanan kotak_a
+	int ketemu = 0;
+	int k = kotak_a + 1;
+	while( true ){
 		if(k % 5 == 0){
 			break;
 		}
-					
+
 		if ( board[k] != giliran || k > 24 || ketemu == 3){
 			break;
 		}else{
-		ketemu++;
+            ketemu++;
 		}
-				
-		k = k + j;
+
+		k = k + 1;
 	}
 	return ketemu;
 }
 
-int cek_h2(int kotak_a, const int *board, const int giliran, const int j){
-	int status1 = 0, ketemu = 0; 
-	int k = kotak_a + j;
-	while( status1 == 0 && k >= 0){
+int cek_h2(int kotak_a, const int *board, const int giliran){//cek horizontal di kiri kotak_a
+	int ketemu = 0;
+	int k = kotak_a - 1;
+	while( k >= 0){
+        if (k == 4 || k == 9 || k == 14 || k == 19){
+			break;
+		}
+
 		if ( board[k] != giliran || ketemu == 3 || kotak_a % 5 == 0){
 			break;
 		}else{
 			ketemu++;
 		}
-				
-		k = k + j;
-		if (k == 4 || k == 9 || k == 14 || k == 19){
-			break;
-		}
+
+		k = k - 1;
+
 	}
 	return ketemu;
 }
 
-int cek_v(int kotak_a, const int *board, const int giliran, const int j){
-	int status1 = 0, ketemu = 0; 
+int cek_v(int kotak_a, const int *board, const int giliran, const int j){//cek vertikal kotak_a
+	int ketemu = 0;
 	int k = kotak_a + j;
 	while(k >= 0 && k <= 24){
 		if ( board[k] != giliran || ketemu == 3){
@@ -314,14 +344,14 @@ int cek_v(int kotak_a, const int *board, const int giliran, const int j){
 		}else{
 			ketemu++;
 		}
-				
+
 		k = k + j;
 	}
 	return ketemu;
 }
 
-int cek_d(int kotak_a, const int *board, const int giliran, const int j, const int m, const int n){
-	int status1 = 0, ketemu = 0; 
+int cek_d(int kotak_a, const int *board, const int giliran, const int j, const int m, const int n){//cek diagonal kotak_a
+	int ketemu = 0;
 	int k = kotak_a + j;
 	while(k >= m && k <= n){
 		if ( board[k] != giliran || ketemu == 3){
@@ -334,163 +364,166 @@ int cek_d(int kotak_a, const int *board, const int giliran, const int j, const i
 	return ketemu;
 }
 
-int cek_menang(const int *board, const int n_kotak, const int giliran)//modul untuk mengecek apakah ada yang menang
-{ 
-	int j, status = 1;
-	while (status == 1){
-		j = 1; 			//cek horizontal
-		status = status + cek_h1(n_kotak, board, giliran, j);
-		status = status + cek_h2(n_kotak, board, giliran, j*-1);
-		if(status >= 4){
-			//status = 4;
-			break;
+
+
+int cek_status(const int *board, const int n_kotak, const int giliran)//modul untuk mengecek jumlah simbol sejajar terbanyak
+{
+    int status_max = 1;
+	int j, status;
+
+        status=1;	//cek horizontal
+		status = status + cek_h1(n_kotak, board, giliran);//cek horizontal kanan n_kotak
+		status = status + cek_h2(n_kotak, board, giliran);//cek horizontal kiri n_kotak
+		if(status > status_max){
+            status_max = status;
 		}
-		
+
 		status = 1;		// cek vertikal
-		j = 5; 
-		status = status + cek_v(n_kotak, board, giliran, j);
-		status = status + cek_v(n_kotak, board, giliran, j*-1);
-		if(status >= 4){
-			//status = 4;
-			break;
+		j = 5;
+		status = status + cek_v(n_kotak, board, giliran, j);//cek vertikal atas n_kotak
+		status = status + cek_v(n_kotak, board, giliran, j*-1);//cek_vertikal bawah n_kotak
+		if(status > status_max){
+            status_max = status;
 		}
-		
-		status = 1;		//cek diagonal kolom 4 - 20
-		j = 4; 
-		int m = 4, n = 20;
-		status = status + cek_d(n_kotak, board, giliran, j, m, n);
-		status = status + cek_d(n_kotak, board, giliran, j*-1, m, n);
-		if(status >= 4){
-			//status = 4;
-			break;
+
+        int m,n;
+		if(n_kotak == 4 || n_kotak == 8 || n_kotak == 12 || n_kotak == 16 || n_kotak == 20){
+            status = 1;		//cek diagonal kolom 5 - 21
+            j = 4;
+            m = 4;
+            n = 20;
+            status = status + cek_d(n_kotak, board, giliran, j, m, n);
+            status = status + cek_d(n_kotak, board, giliran, j*-1, m, n);
+            if(status > status_max){
+            status_max = status;
+            }
 		}
-		
-		status = 1;		//cek diagonal kolom 0 - 24 
-		j = 6; 
-		m = 0;
-		n = 24;
-		status = status + cek_d(n_kotak, board, giliran, j, m, n);
-		status = status + cek_d(n_kotak, board, giliran, j*-1, m, n);
-		if(status >= 4){
-			//status = 4;
-			break;
+
+		if(n_kotak == 0 || n_kotak == 6 || n_kotak == 12 || n_kotak == 18 || n_kotak == 24){
+            status = 1;		//cek diagonal kolom 1 - 25
+            j = 6;
+            m = 0;
+            n = 24;
+            status = status + cek_d(n_kotak, board, giliran, j, m, n);
+            status = status + cek_d(n_kotak, board, giliran, j*-1, m, n);
+            if(status > status_max){
+                status_max = status;
+            }
 		}
-		
-		status = 1;		//cek diagonal kolom 5 - 23 
-		j = 6; 
-		m = 5;
-		n = 23;
-		status = status + cek_d(n_kotak, board, giliran, j, m, n);
-		status = status + cek_d(n_kotak, board, giliran, j*-1, m, n);
-		if(status >= 4){
-			//status = 4;
-			break;
-		}
-		
-		status = 1;		//cek diagonal kolom 1 - 19 
-		j = 6; 
-		m = 1;
-		n = 19;
-		status = status + cek_d(n_kotak, board, giliran, j, m, n);
-		status = status + cek_d(n_kotak, board, giliran, j*-1, m, n);
-		if(status >= 4){
-			//status = 4;
-			break;
-		}
-		
-		status = 1;		//cek diagonal kolom 3 - 15 
-		j = 4; 
-		m = 3;
-		n = 15;
-		status = status + cek_d(n_kotak, board, giliran, j, m, n);
-		status = status + cek_d(n_kotak, board, giliran, j*-1, m, n);
-		if(status >= 4){
-			//status = 4;
-			break;
-		}
-		
-		status = 1;		//cek diagonal kolom 9 - 21 
-		j = 4; 
-		m = 9;
-		n = 21;
-		status = status + cek_d(n_kotak, board, giliran, j, m, n);
-		status = status + cek_d(n_kotak, board, giliran, j*-1, m, n);
-		if(status >= 4){
-			//status = 4;
-			break;
-		}else{
-			status = 1;
-			break;
-		}
-	}
-	return status;
+
+        if(n_kotak == 5 || n_kotak == 11 || n_kotak == 17 || n_kotak == 23){
+            status = 1;		//cek diagonal kolom 6 - 24
+            j = 6;
+            m = 5;
+            n = 23;
+            status = status + cek_d(n_kotak, board, giliran, j, m, n);
+            status = status + cek_d(n_kotak, board, giliran, j*-1, m, n);
+            if(status > status_max){
+                status_max = status;
+            }
+        }
+
+        if(n_kotak == 1 || n_kotak == 7 || n_kotak == 13 || n_kotak == 19){
+            status = 1;		//cek diagonal kolom 2 - 20
+            j = 6;
+            m = 1;
+            n = 19;
+            status = status + cek_d(n_kotak, board, giliran, j, m, n);
+            status = status + cek_d(n_kotak, board, giliran, j*-1, m, n);
+            if(status > status_max){
+                status_max = status;
+            }
+        }
+
+        if(n_kotak == 3 || n_kotak ==  7|| n_kotak == 11 || n_kotak == 15){
+            status = 1;		//cek diagonal kolom 4 - 16
+            j = 4;
+            m = 3;
+            n = 15;
+            status = status + cek_d(n_kotak, board, giliran, j, m, n);
+            status = status + cek_d(n_kotak, board, giliran, j*-1, m, n);
+            if(status > status_max){
+                status_max = status;
+            }
+        }
+
+        if(n_kotak == 9 || n_kotak ==  13|| n_kotak == 17 || n_kotak == 21){
+            status = 1;		//cek diagonal kolom 10 - 22
+            j = 4;
+            m = 9;
+            n = 21;
+            status = status + cek_d(n_kotak, board, giliran, j, m, n);
+            status = status + cek_d(n_kotak, board, giliran, j*-1, m, n);
+            if(status > status_max){
+                status_max = status;
+            }
+        }
+	return status_max;
 }
 
-int menangin_blocking(int *board, const int giliran)//modul untuk menentukan langkah yang akan diambil oleh komputer untuk memenangkan permainan dan mencegah user menang
-{ 
-	int no_kotak = -1, status = 0, i = 0;
+int menangin_blocking(int *board, const int giliran, const int tingkat)//modul untuk menentukan langkah yang akan diambil oleh komputer untuk memenangkan permainan dan mencegah user menang
+{
+	int no_kotak = -1, i = 0;
 	for(i = 0; i < 25; i++){
 		if(board[i] == kosong){
 			no_kotak = i;
 			board[no_kotak] = giliran;
-			if (cek_menang(board, no_kotak, giliran) == 4){
+			if (cek_status(board, no_kotak, giliran) >= tingkat){
 				break;
-			} else{
+			} else {
 				board[no_kotak] = kosong;
 				no_kotak = -1;
-			}			
-		}			
+			}
+		}
 	}
 	return no_kotak;
 }
 
-int isi_tengah(const int *board)// modul untuk menentukan
-{ 
-	int i = 0, j, k = -1;
-	for(i = 0; i < 8; i++) {
-		j = 3;
-		j = (rand() % j);
-		k = tengah[j];
-		if(board[k] == kosong) {
-			break;
-		}
-		k = -1;
-	}
-	return k;
-}
-
 int cek_draw(const int *board)//modul untuk mengecek apakah permainan draw atau tidak
-{ 
+{
 	int i=0;
 	for(i=0; i<25; i++){
-		if(board[i] == kosong) 
+		if(board[i] == kosong)
 		return 1;
 	}
 	return 0;
 }
 
 int input_user(const int *board)//modul untuk memproses inputan langkah dari user pada saat permainan
-{ 
+{
 	//char userinput[12];
 	warnateks(WHITE);
 	int keluar = 0;
-	int pilih_kotak = -1;
+	char pilih_kotak_string[3];
+	int pilih_kotak=-1;
 	while (keluar == 0) {
-		printf("\n\n\n\t\t\tMasukan nomor kotak (1-25) :");	
+		printf("\n\n\n\t\t\tMasukan nomor kotak (1-25) :");
 		label2 :
-		scanf("%d", &pilih_kotak);
-		
+		scanf("%s", pilih_kotak_string);
+        if(strlen(pilih_kotak_string) > 3 ){
+            printf("\n\t\t\tTerlalu banyak character yang diinput\n");
+            continue;
+        }
+        for(int i = 0; i < 3;i++){
+            if(pilih_kotak_string[i] < '0' || pilih_kotak_string[i] > '9'){
+                printf("\n\t\t\tInput harus berupa integer 1-25\n");
+                break;
+            }
+        }
+
+		pilih_kotak = atoi(pilih_kotak_string);
+
 		if (pilih_kotak < 1 || pilih_kotak > 25){
 			pilih_kotak = -1;
-			printf("\n\t\t\tnomor yang anda masukan salah\n");
-			continue; 
+			printf("\n\t\t\tNomor yang anda masukan salah\n");
+			continue;
 		}
-		
+
 		pilih_kotak--;
 		if( board[pilih_kotak] != kosong ){
 			pilih_kotak=-1;
-			printf("\n\t\t\tkotak tersebut sudah terisi, pilih kotak lain : ");
-			continue;	
+			printf("\n\t\t\tKotak tersebut sudah terisi, pilih kotak lain : ");
+			continue;
 		}
 		//if(pilih_kotak>1 || pilih_kotak)
 		keluar=1;
@@ -499,29 +532,38 @@ int input_user(const int *board)//modul untuk memproses inputan langkah dari use
 }
 
 void isi_kotak(int *board,const int no_kotak,const int giliran)//modul untuk mengisi array board dengan tanda dari user dan komputer
-{ 
+{
 	board[no_kotak] = giliran;
 }
 
-int gilirankomputer( int *board, const int _giliran)//modul yang berfungsi untuk menentukan langkah komputer
-{ 
+int gilirankomputer( int *board, const int _giliran,const int tingkat)//modul yang berfungsi untuk menentukan langkah komputer
+{
 	int i = 0, nomor_kotak = 0;
-	
-	nomor_kotak = menangin_blocking(board, _giliran);
-	if(nomor_kotak != -1){
-		return nomor_kotak;
-	}
-	
-	nomor_kotak = menangin_blocking(board, _giliran ^ 1);
-	if(nomor_kotak != -1){
-		return nomor_kotak;
-	}
-	
-	nomor_kotak = isi_tengah(board);
-	if(nomor_kotak != -1){
-		return nomor_kotak;
-	}
-	
+    if(tingkat == normal){//memprioritaskan menang kemudian block
+        nomor_kotak = menangin_blocking(board, _giliran, 4);
+        if(nomor_kotak != -1){
+            return nomor_kotak;
+        }
+
+        nomor_kotak = menangin_blocking(board, _giliran ^ 1, 4);
+        if(nomor_kotak != -1){
+            return nomor_kotak;
+        }
+    }
+
+    if(tingkat == hard){//memprioritaskan block kemudian menang
+        nomor_kotak = menangin_blocking(board, _giliran, 4);
+        if(nomor_kotak != -1){
+            return nomor_kotak;
+        }
+
+        nomor_kotak = menangin_blocking(board, _giliran ^ 1, 3);
+        if(nomor_kotak != -1){
+            return nomor_kotak;
+        }
+    }
+
+
 	nomor_kotak = 0;
 	int nomor_kotak_kosong = 0;
 	int kotak_tersedia[25];
@@ -530,59 +572,58 @@ int gilirankomputer( int *board, const int _giliran)//modul yang berfungsi untuk
 			kotak_tersedia[nomor_kotak_kosong] = i;
 			nomor_kotak_kosong++;
 		}
-	}  
+	}
 	nomor_kotak = (rand() % nomor_kotak_kosong);
-	
-	return kotak_tersedia[nomor_kotak];  
+
+	return kotak_tersedia[nomor_kotak];
 }
 
-void permainan()//modul yang berfungsi untuk menentukan dan mengatur jalannya permainan
-{ 
+void permainanKomputer(const int tingkat)//modul yang berfungsi untuk menentukan dan mengatur jalannya permainan vs komputer
+{
 	int board[25];
 	int game_over = 0, giliran = O, no_kotak = -1;
 	inisialisasi(&board[0]);
-		
+
 	while(game_over != 1) {
 		system("cls");
 		tampilan_board(&board[0]);
 		if(giliran == O){
 			no_kotak = input_user(&board[0]);
 			isi_kotak(&board[0],no_kotak,giliran);
-			giliran = X;
 		}else{
-			no_kotak = gilirankomputer(&board[0], giliran);
+			no_kotak = gilirankomputer(&board[0], giliran, tingkat);
 			isi_kotak(&board[0], no_kotak, giliran);
-			giliran = O;
-			tampilan_board(&board[0]);
-					
+            tampilan_board(&board[0]);
 		}
-								
-		
-		if( cek_menang(board, no_kotak, giliran^1) >= 4 ){
+
+		if( cek_status(board, no_kotak, giliran) >= 4 ){
 			int i = 15, j = -1;
 			system("cls");
 			warnateks(WHITE);
 			printf("\n\n\t\t\t\tG A M E  O V E R\n");
-			tampilan_board_akhir(&board[0]);			
-				if(giliran == O){
-					warnateks(LIGHT_GREEN);
-					printf("\n\n\t\t\t\t Komputer Menang!\n");
-				} else {
-					warnateks(YELLOW);
-					printf("\n\t\t\t\t    Anda Menang!\n\n");
-				}
+			tampilan_board_akhir(&board[0]);
+
+            if(giliran == X){
+                warnateks(LIGHT_GREEN);
+                printf("\n\n\t\t\t\t Komputer Menang!\n");
+            } else {
+                warnateks(YELLOW);
+                printf("\n\t\t\t\t    Anda Menang!\n\n");
+            }
+
 			warnateks(WHITE);
 			printf("\n\t\t\t Anda Ingin Bermain Lagi? \n\t\t\t [1] YA\n\t\t\t [2] TIDAK\n\t\t\t Masukan No Pilihan : "); scanf("%d", &j);
-				if(j==2){
-					game_over = 1;	
-					system("CLS");
-					menu();
-				}else{
-					game_over = 0;
-					inisialisasi(&board[0]);
-				}
+
+            if(j==2){
+                game_over = 1;
+                system("CLS");
+                menu();
+            }else{
+                game_over = 0;
+                inisialisasi(&board[0]);
+            }
 		}
-		
+
 		if(cek_draw(board) == 0) {
 			int j = -1;
 			game_over = 1;
@@ -591,16 +632,100 @@ void permainan()//modul yang berfungsi untuk menentukan dan mengatur jalannya pe
 			tampilan_board_akhir(&board[0]);
 			warnateks(WHITE);
 			printf("\n\t\t\t Anda Ingin Bermain Lagi? \n\t\t\t[1] YA\n\t\t\t[2] TIDAK\n\t\t\tMasukan No Pilihan : "); scanf("%d", &j);
-				if(j==2){
-					game_over = 1;
-					break;	
-				}else{
-					game_over = 0;
-					inisialisasi(&board[0]);
-				}
+            if(j==2){
+                game_over = 1;
+                break;
+            }else{
+                game_over = 0;
+                inisialisasi(&board[0]);
+            }
 		}
-		
-		//tampilan_board(&board[0]);	
+
+		if(giliran == O){
+            giliran = X;
+		}else{
+            giliran = O;
+		}
+	}
+}
+
+void permainanPlayer()//modul yang berfungsi untuk menentukan dan mengatur jalannya permainan vs player
+{
+	int board[25];
+	int game_over = 0, giliran = O, no_kotak = -1;
+	inisialisasi(&board[0]);
+
+	while(game_over != 1) {
+		system("cls");
+		tampilan_board(&board[0]);
+		if(giliran == O){
+            warnateks(YELLOW);
+            printf("\n\n\t\t\t\tGiliran Player O ");
+
+            warnateks(WHITE);
+			no_kotak = input_user(&board[0]);
+			isi_kotak(&board[0],no_kotak,giliran);
+			tampilan_board(&board[0]);
+		}else{
+		    warnateks(GREEN);
+            printf("\n\n\t\t\t\tGiliran Player X ");
+
+            warnateks(WHITE);
+			no_kotak = input_user(&board[0]);
+			isi_kotak(&board[0], no_kotak, giliran);
+            tampilan_board(&board[0]);
+		}
+
+		if( cek_status(board, no_kotak, giliran) >= 4 ){
+			int i = 15, j = -1;
+			system("cls");
+			warnateks(WHITE);
+			printf("\n\n\t\t\t\tG A M E  O V E R\n");
+			tampilan_board_akhir(&board[0]);
+
+            if(giliran == X){
+                warnateks(LIGHT_GREEN);
+                printf("\n\n\t\t\t\t Player X Menang!\n");
+            } else {
+                warnateks(YELLOW);
+                printf("\n\t\t\t\t    Player O Menang!\n\n");
+            }
+
+			warnateks(WHITE);
+			printf("\n\t\t\t Anda Ingin Bermain Lagi? \n\t\t\t [1] YA\n\t\t\t [2] TIDAK\n\t\t\t Masukan No Pilihan : "); scanf("%d", &j);
+
+            if(j==2){
+                game_over = 1;
+                system("CLS");
+                menu();
+            }else{
+                game_over = 0;
+                inisialisasi(&board[0]);
+            }
+		}
+
+		if(cek_draw(board) == 0) {
+			int j = -1;
+			game_over = 1;
+			system("cls");
+			printf("\n\t\t\tD R A W\n");
+			tampilan_board_akhir(&board[0]);
+			warnateks(WHITE);
+			printf("\n\t\t\t Anda Ingin Bermain Lagi? \n\t\t\t[1] YA\n\t\t\t[2] TIDAK\n\t\t\tMasukan No Pilihan : "); scanf("%d", &j);
+            if(j==2){
+                game_over = 1;
+                break;
+            }else{
+                game_over = 0;
+                inisialisasi(&board[0]);
+            }
+		}
+
+		if(giliran == O){
+            giliran = X;
+		}else{
+            giliran = O;
+		}
 	}
 }
 
