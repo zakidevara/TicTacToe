@@ -58,7 +58,7 @@ void gotoxy(int x, int y) //modul untuk memfungsikan fungsi gotoxy
 }
 
 void xo(){//memberi logo x dan o
-	warnateks(LIGHT_GREEN);		warnateks(LIGHT_GREEN);
+	warnateks(LIGHT_GREEN);		
 	gotoxy(9,8); printf("ÛÛ       ÛÛ \n");		
 	gotoxy(9,9); printf("  ÛÛ   ÛÛ \n");		
 	gotoxy(9,10); printf("    ÛÛÛ \n");		
@@ -186,7 +186,7 @@ void loading()//modul untuk menapilkan tampilan loading
 	};
 }
 
-void welcome_screen(){// menampilkan tampilan awal dijalankannya program
+void welcome_screen(){
 	gotoxy(22,28); printf(" Created By : Moh. Dwi, Rangga R, Silvi \n");
 	judul();
 	loading();
@@ -296,9 +296,9 @@ void menu() //modul untuk menampilkan main menu dari program
 	 }
 }
 
-int cek_h1(int kotak_a, const int *board, const int giliran){//cek horizontal di kanan kotak_a
+int cek_h1(int kotak_a, const int *board, const int giliran, const int j){
 	int ketemu = 0;
-	int k = kotak_a + 1;
+	int k = kotak_a + j;
 	while( true ){
 		if(k % 5 == 0){
 			break;
@@ -310,14 +310,14 @@ int cek_h1(int kotak_a, const int *board, const int giliran){//cek horizontal di
             ketemu++;
 		}
 
-		k = k + 1;
+		k = k + j;
 	}
 	return ketemu;
 }
 
-int cek_h2(int kotak_a, const int *board, const int giliran){//cek horizontal di kiri kotak_a
+int cek_h2(int kotak_a, const int *board, const int giliran, const int j){
 	int ketemu = 0;
-	int k = kotak_a - 1;
+	int k = kotak_a + j;
 	while( k >= 0){
         if (k == 4 || k == 9 || k == 14 || k == 19){
 			break;
@@ -329,13 +329,13 @@ int cek_h2(int kotak_a, const int *board, const int giliran){//cek horizontal di
 			ketemu++;
 		}
 
-		k = k - 1;
+		k = k + j;
 
 	}
 	return ketemu;
 }
 
-int cek_v(int kotak_a, const int *board, const int giliran, const int j){//cek vertikal kotak_a
+int cek_v(int kotak_a, const int *board, const int giliran, const int j){
 	int ketemu = 0;
 	int k = kotak_a + j;
 	while(k >= 0 && k <= 24){
@@ -350,7 +350,7 @@ int cek_v(int kotak_a, const int *board, const int giliran, const int j){//cek v
 	return ketemu;
 }
 
-int cek_d(int kotak_a, const int *board, const int giliran, const int j, const int m, const int n){//cek diagonal kotak_a
+int cek_d(int kotak_a, const int *board, const int giliran, const int j, const int m, const int n){
 	int ketemu = 0;
 	int k = kotak_a + j;
 	while(k >= m && k <= n){
@@ -366,94 +366,95 @@ int cek_d(int kotak_a, const int *board, const int giliran, const int j, const i
 
 
 
-int cek_status(const int *board, const int n_kotak, const int giliran)//modul untuk mengecek jumlah simbol sejajar terbanyak
+int cek_status_max(const int *board, const int n_kotak, const int simbol)//modul untuk mengecek jumlah simbol berderet paling banyak jika n_kotak diisi oleh parameter simbol
 {
     int status_max = 1;
 	int j, status;
 
-        status=1;	//cek horizontal
-		status = status + cek_h1(n_kotak, board, giliran);//cek horizontal kanan n_kotak
-		status = status + cek_h2(n_kotak, board, giliran);//cek horizontal kiri n_kotak
+        status=1;
+		j = 1; 			//cek horizontal
+		status = status + cek_h1(n_kotak, board, simbol, j);
+		status = status + cek_h2(n_kotak, board, simbol, j*-1);
 		if(status > status_max){
             status_max = status;
 		}
 
 		status = 1;		// cek vertikal
 		j = 5;
-		status = status + cek_v(n_kotak, board, giliran, j);//cek vertikal atas n_kotak
-		status = status + cek_v(n_kotak, board, giliran, j*-1);//cek_vertikal bawah n_kotak
+		status = status + cek_v(n_kotak, board, simbol, j);
+		status = status + cek_v(n_kotak, board, simbol, j*-1);
 		if(status > status_max){
             status_max = status;
 		}
 
         int m,n;
 		if(n_kotak == 4 || n_kotak == 8 || n_kotak == 12 || n_kotak == 16 || n_kotak == 20){
-            status = 1;		//cek diagonal kolom 5 - 21
+            status = 1;		//cek diagonal kolom 4 - 20
             j = 4;
             m = 4;
             n = 20;
-            status = status + cek_d(n_kotak, board, giliran, j, m, n);
-            status = status + cek_d(n_kotak, board, giliran, j*-1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, j, m, n);
+            status = status + cek_d(n_kotak, board, simbol, j*-1, m, n);
             if(status > status_max){
             status_max = status;
             }
 		}
 
 		if(n_kotak == 0 || n_kotak == 6 || n_kotak == 12 || n_kotak == 18 || n_kotak == 24){
-            status = 1;		//cek diagonal kolom 1 - 25
+            status = 1;		//cek diagonal kolom 0 - 24
             j = 6;
             m = 0;
             n = 24;
-            status = status + cek_d(n_kotak, board, giliran, j, m, n);
-            status = status + cek_d(n_kotak, board, giliran, j*-1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, j, m, n);
+            status = status + cek_d(n_kotak, board, simbol, j*-1, m, n);
             if(status > status_max){
                 status_max = status;
             }
 		}
 
         if(n_kotak == 5 || n_kotak == 11 || n_kotak == 17 || n_kotak == 23){
-            status = 1;		//cek diagonal kolom 6 - 24
+            status = 1;		//cek diagonal kolom 5 - 23
             j = 6;
             m = 5;
             n = 23;
-            status = status + cek_d(n_kotak, board, giliran, j, m, n);
-            status = status + cek_d(n_kotak, board, giliran, j*-1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, j, m, n);
+            status = status + cek_d(n_kotak, board, simbol, j*-1, m, n);
             if(status > status_max){
                 status_max = status;
             }
         }
 
         if(n_kotak == 1 || n_kotak == 7 || n_kotak == 13 || n_kotak == 19){
-            status = 1;		//cek diagonal kolom 2 - 20
+            status = 1;		//cek diagonal kolom 1 - 19
             j = 6;
             m = 1;
             n = 19;
-            status = status + cek_d(n_kotak, board, giliran, j, m, n);
-            status = status + cek_d(n_kotak, board, giliran, j*-1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, j, m, n);
+            status = status + cek_d(n_kotak, board, simbol, j*-1, m, n);
             if(status > status_max){
                 status_max = status;
             }
         }
 
         if(n_kotak == 3 || n_kotak ==  7|| n_kotak == 11 || n_kotak == 15){
-            status = 1;		//cek diagonal kolom 4 - 16
+            status = 1;		//cek diagonal kolom 3 - 15
             j = 4;
             m = 3;
             n = 15;
-            status = status + cek_d(n_kotak, board, giliran, j, m, n);
-            status = status + cek_d(n_kotak, board, giliran, j*-1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, j, m, n);
+            status = status + cek_d(n_kotak, board, simbol, j*-1, m, n);
             if(status > status_max){
                 status_max = status;
             }
         }
 
         if(n_kotak == 9 || n_kotak ==  13|| n_kotak == 17 || n_kotak == 21){
-            status = 1;		//cek diagonal kolom 10 - 22
+            status = 1;		//cek diagonal kolom 9 - 21
             j = 4;
             m = 9;
             n = 21;
-            status = status + cek_d(n_kotak, board, giliran, j, m, n);
-            status = status + cek_d(n_kotak, board, giliran, j*-1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, j, m, n);
+            status = status + cek_d(n_kotak, board, simbol, j*-1, m, n);
             if(status > status_max){
                 status_max = status;
             }
@@ -461,19 +462,52 @@ int cek_status(const int *board, const int n_kotak, const int giliran)//modul un
 	return status_max;
 }
 
-int menangin_blocking(int *board, const int giliran, const int tingkat)//modul untuk menentukan langkah yang akan diambil oleh komputer untuk memenangkan permainan dan mencegah user menang
+int generateAngka(int *board, const int simbol, const int jumlah)//modul untuk men-generate angka yang apabila angka tersebut diisi dapat membentuk sederet simbol berjumlah sesuai dengan parameter jumlah
 {
-	int no_kotak = -1, i = 0;
-	for(i = 0; i < 25; i++){
-		if(board[i] == kosong){
-			no_kotak = i;
-			board[no_kotak] = giliran;
-			if (cek_status(board, no_kotak, giliran) >= tingkat){
-				break;
+	int no_kotak, i;
+	//pencarian kotak tengah (index 12)
+	no_kotak=12;
+	if(board[no_kotak] == kosong){
+			board[no_kotak] = simbol;
+			if (cek_status_max(board, no_kotak, simbol) >= jumlah){
+				return no_kotak;
 			} else {
 				board[no_kotak] = kosong;
 				no_kotak = -1;
 			}
+    }
+
+    //pencarian kotak kedua dari tengah
+    for(i=6;i<=18;i++){
+        if(board[i] == kosong && i != 12){
+			no_kotak = i;
+			board[no_kotak] = simbol;
+			if (cek_status_max(board, no_kotak, simbol) >= jumlah){
+				return no_kotak;
+			} else {
+				board[no_kotak] = kosong;
+				no_kotak = -1;
+			}
+		}
+		if(i==8||i==13||i==18){
+            i=i+2;
+		}
+    }
+
+    //pencarian kotak terluar
+	for(i = 0; i <= 24; i++){
+		if(board[i] == kosong){
+			no_kotak = i;
+			board[no_kotak] = simbol;
+			if (cek_status_max(board, no_kotak, simbol) >= jumlah){
+				return no_kotak;
+			} else {
+				board[no_kotak] = kosong;
+				no_kotak = -1;
+			}
+		}
+		if(i==5 || i==10 || i == 15){
+            i=i+3;
 		}
 	}
 	return no_kotak;
@@ -540,29 +574,34 @@ int gilirankomputer( int *board, const int _giliran,const int tingkat)//modul ya
 {
 	int i = 0, nomor_kotak = 0;
     if(tingkat == normal){//memprioritaskan menang kemudian block
-        nomor_kotak = menangin_blocking(board, _giliran, 4);
+        nomor_kotak = generateAngka(board, _giliran, 4);
         if(nomor_kotak != -1){
             return nomor_kotak;
         }
 
-        nomor_kotak = menangin_blocking(board, _giliran ^ 1, 4);
+        nomor_kotak = generateAngka(board, _giliran ^ 1, 4);
         if(nomor_kotak != -1){
             return nomor_kotak;
         }
     }
 
     if(tingkat == hard){//memprioritaskan block kemudian menang
-        nomor_kotak = menangin_blocking(board, _giliran, 4);
+        nomor_kotak = generateAngka(board, _giliran, 4);
         if(nomor_kotak != -1){
             return nomor_kotak;
         }
 
-        nomor_kotak = menangin_blocking(board, _giliran ^ 1, 4);
+        nomor_kotak = generateAngka(board, _giliran ^ 1, 4);
         if(nomor_kotak != -1){
             return nomor_kotak;
         }
 
-        nomor_kotak = menangin_blocking(board, _giliran ^ 1, 3);
+        nomor_kotak = generateAngka(board, _giliran, 3);
+        if(nomor_kotak != -1){
+            return nomor_kotak;
+        }
+
+        nomor_kotak = generateAngka(board, _giliran ^ 1, 3);
         if(nomor_kotak != -1){
             return nomor_kotak;
         }
@@ -601,7 +640,7 @@ void permainanKomputer(const int tingkat)//modul yang berfungsi untuk menentukan
             tampilan_board(&board[0]);
 		}
 
-		if( cek_status(board, no_kotak, giliran) >= 4 ){
+		if( cek_status_max(board, no_kotak, giliran) >= 4 ){
 			int i = 15, j = -1;
 			system("cls");
 			warnateks(WHITE);
@@ -681,7 +720,7 @@ void permainanPlayer()//modul yang berfungsi untuk menentukan dan mengatur jalan
             tampilan_board(&board[0]);
 		}
 
-		if( cek_status(board, no_kotak, giliran) >= 4 ){
+		if( cek_status_max(board, no_kotak, giliran) >= 4 ){
 			int i = 15, j = -1;
 			system("cls");
 			warnateks(WHITE);
