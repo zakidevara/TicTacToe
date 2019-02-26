@@ -4,7 +4,6 @@
 #include<conio.h>
 #include<windows.h>
 #include<time.h>
-#define panjang 6000
 
 #define BLACK           0
 #define DARK_BLUE       1
@@ -196,34 +195,34 @@ void welcome_screen(){//tampilan saat program pertama dijalankan
 
 void aboutus(){//menampilkan file creator.txt tentang pembuat game
 	FILE *creator;
-	char creat[panjang];
+	char creat[1000];
 
 	creator = fopen("creator.txt", "rt");
-	while((fgets(creat, panjang, creator))!= NULL){
+	while((fgets(creat, 1000, creator))!= NULL){
 		printf("%s\r", creat);
 	}
 
 	fclose(creator);
 
 
-	gotoxy(22,25); printf("   Press Any Key To Return.....");getch();
+	gotoxy(22,25); printf("   Press Any Key To Return.....");_getch();
 	system("CLS");
 	menu();
 }
 
 void instructions(){//mmenampilkan file instruksi.txt tentang cara bermain game
 	FILE *instruksi;
-	char instruk[panjang];
+	char instruk[1000];
 
 	instruksi = fopen("instruksi.txt", "rt");
-	while((fgets(instruk, panjang, instruksi))!= NULL){
+	while((fgets(instruk, 1000, instruksi))!= NULL){
 		printf("%s\r", instruk);
 	}
 
 	fclose(instruksi);
 
 
-	gotoxy(22,25); printf("   Press Any Key To Return.....");getch();
+	gotoxy(22,25); printf("   Press Any Key To Return.....");_getch();
 	system("CLS");
 	menu();
 }
@@ -316,70 +315,65 @@ void menu() //modul untuk menampilkan main menu dari program
 	 }
 }
 
-int cek_h1(int kotak_a, const int *board, const int simbol, const int j){//modul untuk mengecek jml simbol secara horizontal ke kanan
+int cek_h(int kotak_a, const int *board, const int simbol, int j)//modul untuk mengecek jml simbol secara horizontal
+{
 	int ketemu = 0;
-	int k = kotak_a + j;
-	while( true ){
-		if(k % 5 == 0){
-			break;
-		}
-
-		if ( board[k] != simbol || k > 24 || ketemu == 3){
-			break;
-		}else{
+	int k = kotak_a + (1*j);
+	if(j==1){//j=1 berarti cek horizontal sebelah kanan kotak_a
+        while( board[k] == simbol && k < 24 && k % 5 != 0){
             ketemu++;
-		}
+            k = k + (j*1);
+        }
+        return ketemu;
+	}else if(j==-1){//j=-1 berarti cek horizontal sebelah kiri kotak_a
+        while( k >= 0 && board[k] == simbol && kotak_a % 5 != 0){
+            if (k == 4 || k == 9 || k == 14 || k == 19){
+                break;
+            }
 
-		k = k + j;
+            ketemu++;
+            k = k + (j*1);
+
+        }
+        return ketemu;
 	}
-	return ketemu;
 }
 
-int cek_h2(int kotak_a, const int *board, const int simbol, const int j){//modul untuk mengecek jml simbol secara horizontal ke kiri
+int cek_v(int kotak_a, const int *board, const int simbol, int j)//modul untuk mengecek jml simbol secara vertikal
+{
 	int ketemu = 0;
-	int k = kotak_a + j;
-	while( k >= 0){
-        if (k == 4 || k == 9 || k == 14 || k == 19){
-			break;
-		}
-
-		if ( board[k] != simbol || ketemu == 3 || kotak_a % 5 == 0){
-			break;
-		}else{
-			ketemu++;
-		}
-
-		k = k + j;
-
-	}
-	return ketemu;
-}
-
-int cek_v(int kotak_a, const int *board, const int simbol, const int j){//modul untuk mengecek jml simbol secara vertikal
-	int ketemu = 0;
-	int k = kotak_a + j;
+	int k = kotak_a + (5*j);
 	while(k >= 0 && k <= 24){
-		if ( board[k] != simbol || ketemu == 3){
+		if ( board[k] != simbol){
 			break;
 		}else{
 			ketemu++;
 		}
 
-		k = k + j;
+		k = k + (j*5);
 	}
 	return ketemu;
 }
 
-int cek_d(int kotak_a, const int *board, const int simbol, const int j, const int m, const int n){//modul untuk mengecek jml simbol secara diagonal
+int cek_d(int kotak_a, const int *board, const int simbol, int j, int m, int n)//modul untuk mengecek jml simbol secara diagonal
+{
 	int ketemu = 0;
-	int k = kotak_a + j;
+	int k,x;
+
+	if((m == 4 && n==20)||(m==9 && n==21)||(m==3 && n==15)){
+        x=4;
+	}else{
+        x=6;
+	}
+
+	k = kotak_a + (j*x);
 	while(k >= m && k <= n){
-		if ( board[k] != simbol || ketemu == 3){
+		if ( board[k] != simbol ){
 			break;
 		}else{
 			ketemu++;
 		}
-		k = k + j;
+		k = k + (j*x);
 	}
 	return ketemu;
 }
@@ -387,20 +381,18 @@ int cek_d(int kotak_a, const int *board, const int simbol, const int j, const in
 int cek_status_max(const int *board, const int n_kotak, const int simbol)//modul untuk mengecek jumlah simbol berderet paling banyak jika n_kotak diisi oleh parameter simbol
 {
     int status_max = 1;
-	int j, status;
+	int status;
 
-        status=1;
-		j = 1; 			//cek horizontal
-		status = status + cek_h1(n_kotak, board, simbol, j);
-		status = status + cek_h2(n_kotak, board, simbol, j*-1);
+        status=1;		//cek horizontal
+		status = status + cek_h(n_kotak, board, simbol, 1);//horizontal kanan
+		status = status + cek_h(n_kotak, board, simbol, -1);//horizontal kiri
 		if(status > status_max){
             status_max = status;
 		}
 
 		status = 1;		// cek vertikal
-		j = 5;
-		status = status + cek_v(n_kotak, board, simbol, j);
-		status = status + cek_v(n_kotak, board, simbol, j*-1);
+		status = status + cek_v(n_kotak, board, simbol, 1);//vertikal atas
+		status = status + cek_v(n_kotak, board, simbol, -1);//vertikal bawah
 		if(status > status_max){
             status_max = status;
 		}
@@ -408,23 +400,21 @@ int cek_status_max(const int *board, const int n_kotak, const int simbol)//modul
         int m,n;
 		if(n_kotak == 4 || n_kotak == 8 || n_kotak == 12 || n_kotak == 16 || n_kotak == 20){
             status = 1;		//cek diagonal kolom 4 - 20
-            j = 4;
             m = 4;
             n = 20;
-            status = status + cek_d(n_kotak, board, simbol, j, m, n);
-            status = status + cek_d(n_kotak, board, simbol, j*-1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, 1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, -1, m, n);
             if(status > status_max){
-            status_max = status;
+                status_max = status;
             }
 		}
 
 		if(n_kotak == 0 || n_kotak == 6 || n_kotak == 12 || n_kotak == 18 || n_kotak == 24){
             status = 1;		//cek diagonal kolom 0 - 24
-            j = 6;
             m = 0;
             n = 24;
-            status = status + cek_d(n_kotak, board, simbol, j, m, n);
-            status = status + cek_d(n_kotak, board, simbol, j*-1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, 1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, -1, m, n);
             if(status > status_max){
                 status_max = status;
             }
@@ -432,11 +422,10 @@ int cek_status_max(const int *board, const int n_kotak, const int simbol)//modul
 
         if(n_kotak == 5 || n_kotak == 11 || n_kotak == 17 || n_kotak == 23){
             status = 1;		//cek diagonal kolom 5 - 23
-            j = 6;
             m = 5;
             n = 23;
-            status = status + cek_d(n_kotak, board, simbol, j, m, n);
-            status = status + cek_d(n_kotak, board, simbol, j*-1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, 1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, -1, m, n);
             if(status > status_max){
                 status_max = status;
             }
@@ -444,11 +433,10 @@ int cek_status_max(const int *board, const int n_kotak, const int simbol)//modul
 
         if(n_kotak == 1 || n_kotak == 7 || n_kotak == 13 || n_kotak == 19){
             status = 1;		//cek diagonal kolom 1 - 19
-            j = 6;
             m = 1;
             n = 19;
-            status = status + cek_d(n_kotak, board, simbol, j, m, n);
-            status = status + cek_d(n_kotak, board, simbol, j*-1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, 1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, -1, m, n);
             if(status > status_max){
                 status_max = status;
             }
@@ -456,11 +444,10 @@ int cek_status_max(const int *board, const int n_kotak, const int simbol)//modul
 
         if(n_kotak == 3 || n_kotak ==  7|| n_kotak == 11 || n_kotak == 15){
             status = 1;		//cek diagonal kolom 3 - 15
-            j = 4;
             m = 3;
             n = 15;
-            status = status + cek_d(n_kotak, board, simbol, j, m, n);
-            status = status + cek_d(n_kotak, board, simbol, j*-1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, 1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, -1, m, n);
             if(status > status_max){
                 status_max = status;
             }
@@ -468,11 +455,10 @@ int cek_status_max(const int *board, const int n_kotak, const int simbol)//modul
 
         if(n_kotak == 9 || n_kotak ==  13|| n_kotak == 17 || n_kotak == 21){
             status = 1;		//cek diagonal kolom 9 - 21
-            j = 4;
             m = 9;
             n = 21;
-            status = status + cek_d(n_kotak, board, simbol, j, m, n);
-            status = status + cek_d(n_kotak, board, simbol, j*-1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, 1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, -1, m, n);
             if(status > status_max){
                 status_max = status;
             }
