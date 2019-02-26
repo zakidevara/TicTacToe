@@ -25,7 +25,6 @@
 #define STDHEADER     143
 #define STDBACKGROUND 159
 
-const int O = 0, X = 1, kosong = 3;
 void menu();
 void permainanKomputer(int);
 void permainanPlayer();
@@ -42,11 +41,13 @@ void warnateks(int warna) //modul yang berfungsi untuk memberi warna ke karakter
 
 void inisialisasi(int *board) //modul untuk memberi nilai awal ke array board
 {
+    const int kosong = 3;
 	int i = 0;
 	for(i=0; i<25; i++){
 		board[i]=kosong;
 	}
 }
+
 
 void gotoxy(int x, int y) //modul untuk memfungsikan fungsi gotoxy
 {
@@ -378,97 +379,10 @@ int cek_d(int kotak_a, const int *board, const int simbol, int j, int m, int n)/
 	return ketemu;
 }
 
-int cek_status_max(const int *board, const int n_kotak, const int simbol)//modul untuk mengecek jumlah simbol berderet paling banyak jika n_kotak diisi oleh parameter simbol
-{
-    int status_max = 1;
-	int status;
-
-        status=1;		//cek horizontal
-		status = status + cek_h(n_kotak, board, simbol, 1);//horizontal kanan
-		status = status + cek_h(n_kotak, board, simbol, -1);//horizontal kiri
-		if(status > status_max){
-            status_max = status;
-		}
-
-		status = 1;		// cek vertikal
-		status = status + cek_v(n_kotak, board, simbol, 1);//vertikal atas
-		status = status + cek_v(n_kotak, board, simbol, -1);//vertikal bawah
-		if(status > status_max){
-            status_max = status;
-		}
-
-        int m,n;
-		if(n_kotak == 4 || n_kotak == 8 || n_kotak == 12 || n_kotak == 16 || n_kotak == 20){
-            status = 1;		//cek diagonal kolom 4 - 20
-            m = 4;
-            n = 20;
-            status = status + cek_d(n_kotak, board, simbol, 1, m, n);
-            status = status + cek_d(n_kotak, board, simbol, -1, m, n);
-            if(status > status_max){
-                status_max = status;
-            }
-		}
-
-		if(n_kotak == 0 || n_kotak == 6 || n_kotak == 12 || n_kotak == 18 || n_kotak == 24){
-            status = 1;		//cek diagonal kolom 0 - 24
-            m = 0;
-            n = 24;
-            status = status + cek_d(n_kotak, board, simbol, 1, m, n);
-            status = status + cek_d(n_kotak, board, simbol, -1, m, n);
-            if(status > status_max){
-                status_max = status;
-            }
-		}
-
-        if(n_kotak == 5 || n_kotak == 11 || n_kotak == 17 || n_kotak == 23){
-            status = 1;		//cek diagonal kolom 5 - 23
-            m = 5;
-            n = 23;
-            status = status + cek_d(n_kotak, board, simbol, 1, m, n);
-            status = status + cek_d(n_kotak, board, simbol, -1, m, n);
-            if(status > status_max){
-                status_max = status;
-            }
-        }
-
-        if(n_kotak == 1 || n_kotak == 7 || n_kotak == 13 || n_kotak == 19){
-            status = 1;		//cek diagonal kolom 1 - 19
-            m = 1;
-            n = 19;
-            status = status + cek_d(n_kotak, board, simbol, 1, m, n);
-            status = status + cek_d(n_kotak, board, simbol, -1, m, n);
-            if(status > status_max){
-                status_max = status;
-            }
-        }
-
-        if(n_kotak == 3 || n_kotak ==  7|| n_kotak == 11 || n_kotak == 15){
-            status = 1;		//cek diagonal kolom 3 - 15
-            m = 3;
-            n = 15;
-            status = status + cek_d(n_kotak, board, simbol, 1, m, n);
-            status = status + cek_d(n_kotak, board, simbol, -1, m, n);
-            if(status > status_max){
-                status_max = status;
-            }
-        }
-
-        if(n_kotak == 9 || n_kotak ==  13|| n_kotak == 17 || n_kotak == 21){
-            status = 1;		//cek diagonal kolom 9 - 21
-            m = 9;
-            n = 21;
-            status = status + cek_d(n_kotak, board, simbol, 1, m, n);
-            status = status + cek_d(n_kotak, board, simbol, -1, m, n);
-            if(status > status_max){
-                status_max = status;
-            }
-        }
-	return status_max;
-}
-
 int generateAngka(int *board, const int simbol, const int jumlah)//modul untuk men-generate angka yang apabila angka tersebut diisi dapat membentuk sederet simbol berjumlah sesuai dengan parameter jumlah
 {
 	int no_kotak, i;
+	const int kosong = 3;
 	//pencarian kotak tengah (index 12)
 	no_kotak=12;
 	if(board[no_kotak] == kosong){
@@ -520,6 +434,8 @@ int generateAngka(int *board, const int simbol, const int jumlah)//modul untuk m
 bool cek_draw(const int *board)//modul untuk mengecek apakah permainan draw atau tidak
 {
 	int i=0;
+	const int kosong = 3;
+
 	for(i=0; i<25; i++){
 		if(board[i] == kosong)
 		return false;
@@ -547,6 +463,7 @@ int input_permainan(const int *board)//modul untuk memproses inputan langkah dar
 {
 	char pilih_kotak_string[3];
 	int pilih_kotak;
+	const int kosong = 3;
 
 	do{
 		printf("\n\n\n\t\t\tMasukan nomor kotak (1-25) :");
@@ -577,6 +494,7 @@ int gilirankomputer( int *board, const int _giliran,int tingkat)//modul yang ber
 	int i = 0, nomor_kotak = 0;
 	int normal = 1;
 	int hard = 2;
+	const int kosong = 3;
 
     if(tingkat == normal){//memprioritaskan menang kemudian block
         nomor_kotak = generateAngka(board, _giliran, 4);
@@ -629,6 +547,7 @@ int gilirankomputer( int *board, const int _giliran,int tingkat)//modul yang ber
 void permainanKomputer(int tingkat)//modul yang berfungsi untuk menentukan dan mengatur jalannya permainan vs komputer
 {
 	int board[25];
+	const int O = 0, X = 1;
 	int game_over = 0, giliran = O, no_kotak = -1;
 	inisialisasi(&board[0]);
 
@@ -700,6 +619,7 @@ void permainanKomputer(int tingkat)//modul yang berfungsi untuk menentukan dan m
 void permainanPlayer()//modul yang berfungsi untuk menentukan dan mengatur jalannya permainan vs player
 {
 	int board[25];
+	const int O = 0, X = 1;
 	int game_over = 0, giliran = O, no_kotak = -1;
 	inisialisasi(&board[0]);
 
@@ -715,7 +635,7 @@ void permainanPlayer()//modul yang berfungsi untuk menentukan dan mengatur jalan
 			isi_kotak(&board[0],no_kotak,giliran);
 			tampilan_board(&board[0]);
 		}else{
-		    warnateks(GREEN);
+		    warnateks(LIGHT_GREEN);
             printf("\n\n\t\t\t\tGiliran Player X ");
 
             warnateks(WHITE);
