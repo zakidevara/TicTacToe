@@ -557,6 +557,11 @@ int gilirankomputer( int *board, const int _giliran,const int tingkat)//modul ya
             return nomor_kotak;
         }
 
+        nomor_kotak = menangin_blocking(board, _giliran ^ 1, 4);
+        if(nomor_kotak != -1){
+            return nomor_kotak;
+        }
+
         nomor_kotak = menangin_blocking(board, _giliran ^ 1, 3);
         if(nomor_kotak != -1){
             return nomor_kotak;
