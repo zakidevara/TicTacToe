@@ -379,6 +379,94 @@ int cek_d(int kotak_a, const int *board, const int simbol, int j, int m, int n)/
 	return ketemu;
 }
 
+int cek_status_max(const int *board, const int n_kotak, const int simbol)//modul untuk mengecek jumlah simbol berderet paling banyak jika n_kotak diisi oleh parameter simbol
+{
+    int status_max = 1;
+	int status;
+
+        status=1;		//cek horizontal
+		status = status + cek_h(n_kotak, board, simbol, 1);//horizontal kanan
+		status = status + cek_h(n_kotak, board, simbol, -1);//horizontal kiri
+		if(status > status_max){
+            status_max = status;
+		}
+
+		status = 1;		// cek vertikal
+		status = status + cek_v(n_kotak, board, simbol, 1);//vertikal atas
+		status = status + cek_v(n_kotak, board, simbol, -1);//vertikal bawah
+		if(status > status_max){
+            status_max = status;
+		}
+
+        int m,n;
+		if(n_kotak == 4 || n_kotak == 8 || n_kotak == 12 || n_kotak == 16 || n_kotak == 20){
+            status = 1;		//cek diagonal kolom 4 - 20
+            m = 4;
+            n = 20;
+            status = status + cek_d(n_kotak, board, simbol, 1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, -1, m, n);
+            if(status > status_max){
+                status_max = status;
+            }
+		}
+
+		if(n_kotak == 0 || n_kotak == 6 || n_kotak == 12 || n_kotak == 18 || n_kotak == 24){
+            status = 1;		//cek diagonal kolom 0 - 24
+            m = 0;
+            n = 24;
+            status = status + cek_d(n_kotak, board, simbol, 1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, -1, m, n);
+            if(status > status_max){
+                status_max = status;
+            }
+		}
+
+        if(n_kotak == 5 || n_kotak == 11 || n_kotak == 17 || n_kotak == 23){
+            status = 1;		//cek diagonal kolom 5 - 23
+            m = 5;
+            n = 23;
+            status = status + cek_d(n_kotak, board, simbol, 1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, -1, m, n);
+            if(status > status_max){
+                status_max = status;
+            }
+        }
+
+        if(n_kotak == 1 || n_kotak == 7 || n_kotak == 13 || n_kotak == 19){
+            status = 1;		//cek diagonal kolom 1 - 19
+            m = 1;
+            n = 19;
+            status = status + cek_d(n_kotak, board, simbol, 1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, -1, m, n);
+            if(status > status_max){
+                status_max = status;
+            }
+        }
+
+        if(n_kotak == 3 || n_kotak ==  7|| n_kotak == 11 || n_kotak == 15){
+            status = 1;		//cek diagonal kolom 3 - 15
+            m = 3;
+            n = 15;
+            status = status + cek_d(n_kotak, board, simbol, 1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, -1, m, n);
+            if(status > status_max){
+                status_max = status;
+            }
+        }
+
+        if(n_kotak == 9 || n_kotak ==  13|| n_kotak == 17 || n_kotak == 21){
+            status = 1;		//cek diagonal kolom 9 - 21
+            m = 9;
+            n = 21;
+            status = status + cek_d(n_kotak, board, simbol, 1, m, n);
+            status = status + cek_d(n_kotak, board, simbol, -1, m, n);
+            if(status > status_max){
+                status_max = status;
+            }
+        }
+	return status_max;
+}
+
 int generateAngka(int *board, const int simbol, const int jumlah)//modul untuk men-generate angka yang apabila angka tersebut diisi dapat membentuk sederet simbol berjumlah sesuai dengan parameter jumlah
 {
 	int no_kotak, i;
