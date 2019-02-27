@@ -183,7 +183,7 @@ void loading()//modul untuk menapilkan tampilan loading
 	gotoxy(x,22);printf("º                        º");
 	gotoxy(x,23);printf("ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼");
 	for(n=29;n<=50;n++){
-		gotoxy(n,22);printf("?");
+		gotoxy(n,22);printf("Û");
 		jedaWaktu(0.1);
 	};
 }
