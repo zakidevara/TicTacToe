@@ -554,11 +554,14 @@ int input_permainan(const int *board)//modul untuk memproses inputan langkah dar
 	const int kosong = 3;
 
 	do{
-		printf("\n\n\n\t\t\tMasukan nomor kotak (1-25) :");
+		printf("\n\n\n\t\t\tMasukkan angka 99 untuk kembali ke menu");
+		printf("\n\t\t\tMasukan nomor kotak (1-25) :");
 		scanf("%s", pilih_kotak_string);
 		pilih_kotak=atoi(pilih_kotak_string)-1;
 
-        if(strlen(pilih_kotak_string) > 3 ){
+        if(pilih_kotak+1 == 99){
+			break;
+        }else if(strlen(pilih_kotak_string) > 3 ){
             printf("\n\t\t\tInput harus kurang dari 3 karakter\n");
         }else if(!cekInputInteger(pilih_kotak_string)){
             printf("\n\t\t\tInput harus berupa integer\n");
@@ -650,6 +653,12 @@ void permainanKomputer(int tingkat)//modul yang berfungsi untuk menentukan dan m
 			isi_kotak(&board[0], no_kotak, giliran);
             tampilan_board(&board[0]);
 		}
+		
+		if(no_kotak+1 == 99)
+		{
+			system("cls");
+			menu();
+		}
 
 		if( cek_status_max(board, no_kotak, giliran) >= 4 ){
 			int i = 15, j = -1;
@@ -730,6 +739,12 @@ void permainanPlayer()//modul yang berfungsi untuk menentukan dan mengatur jalan
 			no_kotak = input_permainan(&board[0]);
 			isi_kotak(&board[0], no_kotak, giliran);
             tampilan_board(&board[0]);
+		}
+		
+		if(no_kotak+1 == 99)
+		{
+			system("cls");
+			menu();
 		}
 
 		if( cek_status_max(board, no_kotak, giliran) >= 4 ){
