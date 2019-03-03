@@ -4,27 +4,10 @@
 #include<conio.h>
 #include<windows.h>
 #include<time.h>
+#include"warna.h"
 
-#define BLACK           0
-#define DARK_BLUE       1
-#define GREEN           2
-#define TURQUOISE       3
-#define DARK_RED        4
-#define PURPLE          5
-#define FOREST_GREEN    6
-#define LIGHT_GRAY      7
-#define GRAY            8
-#define BLUE            9
-#define LIGHT_GREEN    10
-#define LIGHT_BLUE     11
-#define RED            12
-#define PINK           13
-#define YELLOW         14
-#define WHITE          15
-#define STDALERT      140
-#define STDHEADER     143
-#define STDBACKGROUND 159
 
+char Name[10],player1[10],player2[10];
 void menu();
 void permainanKomputer(int);
 void permainanPlayer();
@@ -66,8 +49,7 @@ void xo(){//memberi logo x dan o
 	gotoxy(9,10); printf("    ÛÛÛ \n");		
 	gotoxy(9,11); printf("    ÛÛÛ \n");		
 	gotoxy(9,12); printf("  ÛÛ   ÛÛ \n");		
-	gotoxy(9,13); printf("ÛÛ       ÛÛ \n");			
-	gotoxy(9,15);printf(" COMPUTER \n");		
+	gotoxy(9,13); printf("ÛÛ       ÛÛ \n");		
 	warnateks(YELLOW);		
 	gotoxy(61,8); printf("    ÛÛÛÛ  \n");		
 	gotoxy(61,9); printf("  ÛÛ    ÛÛ \n");		
@@ -75,7 +57,6 @@ void xo(){//memberi logo x dan o
 	gotoxy(61,11); printf("  ÛÛ    ÛÛ \n");		
 	gotoxy(61,12); printf("  ÛÛ    ÛÛ \n");		
 	gotoxy(61,13); printf("    ÛÛÛÛ \n");		
-	gotoxy(61,15);printf("    USER   \n");			
 }
 
 void tampilan_board(const int *board) //modul untuk menampilkan array board ke layar
@@ -167,7 +148,19 @@ void judul()//sebagai tampilan awal program
 	gotoxy(61,22); printf("  ÛÛ    ÛÛ \n");
 	gotoxy(61,23); printf("    ÛÛÛÛ \n");	
 }
-
+void garis()//buat garis di input nama player, kalo garisnya ga misah jadinya tampilannya ga enakeun - alya
+{
+	judul();
+	warnateks(WHITE);
+	gotoxy(25,19);printf(" ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»\n");
+	gotoxy(25,20);printf(" º			      º\n");
+	gotoxy(25,21);printf(" º			      º\n");
+    gotoxy(25,22);printf(" º			      º\n");
+    gotoxy(25,23);printf(" º			      º\n");
+    gotoxy(25,24);printf(" º			      º\n");
+    gotoxy(25,25);printf(" º			      º\n");
+    gotoxy(25,26);printf(" ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼\n");
+}
 void jedaWaktu(float seconds){//memberi jeda waktu dalam satuan detik
 	clock_t endwait;
 	endwait=clock()+seconds*CLOCKS_PER_SEC;
@@ -227,7 +220,60 @@ void instructions(){//mmenampilkan file instruksi.txt tentang cara bermain game
 	system("CLS");
 	menu();
 }
-
+void NameF()//modul buat input nama player dibatasin 10 maksimal karakter-alya
+{
+	FILE *f_nama;
+	int Ch = 0;
+	if ((f_nama=fopen("nama.dat", "ab+"))==NULL) 
+ 	{ 
+  		printf ("\t File tidak dapat dibuka\n"); 
+  		exit(1); 
+	}
+	while(Ch < 10)
+		{
+			Name[Ch] = getch();
+			if(Ch > 0 && Name[Ch] == '\b')
+				{
+					Ch --;
+					putch(8);
+				}
+			else
+				putch(Name[Ch]);
+				
+			if(Name[Ch] == '\r')
+				break;
+			Ch++;
+		}	
+	fwrite (&Name, sizeof(Name), 1, f_nama);
+	fclose(f_nama);	
+}
+void nama_user()//modul isi nama-alya
+{
+	int pilih_menu;
+	garis();
+	gotoxy(25,18);printf("Input nama maksimal 10 karakter");
+	gotoxy(30,21);printf("Player 1 : ");NameF();
+	strcpy(player1,Name);//asal bug maksimal 10 karakter sama yang player menang - alya
+    printf("%s",Name);
+	gotoxy(30,22);printf("Player 2 : ");NameF();
+	printf("%s",Name);//kalo yang atas gaada strcpy, kayaknya gabakal ada bug tapi syntax strcpy butuh buat nyimpen nama player 1-alya
+}
+void highscore()//belum highscore, masih history player-alya 
+{
+	FILE *f_nama;
+	if ((f_nama=fopen("nama.dat", "rb"))==NULL) 
+ 	{ 
+  		printf ("\t File tidak dapat dibuka\n"); 
+  		exit(1); 
+	} 
+	printf ("\n\t HIGHSCORE : \n\n"); 
+ 	printf ("\n\t Nama\t\t\t  \tMenang\t\t\t Draw\t\t Kalah"); 
+ 	while ((fread(&Name, sizeof(Name), 1, f_nama))==1)
+ 	{ 
+ 		printf("\n\n\t %s \t\t\t ", Name);
+ 	}
+ 	fclose(f_nama);
+}
 void menu() //modul untuk menampilkan main menu dari program
 {
 	int i = 28;
@@ -243,16 +289,16 @@ void menu() //modul untuk menampilkan main menu dari program
    	gotoxy(i,21);printf(" º   [1] PLAY NOW !      º\n");
    	gotoxy(i,22);printf(" º   [2] INSTRUCTIONS    º\n");
    	gotoxy(i,23);printf(" º   [3] THE CREATOR     º\n");
-   	gotoxy(i,24);printf(" º   [0] Exit            º\n");
-   	gotoxy(i,25);printf(" º                       º\n");
-   	gotoxy(i,26);printf(" ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼\n");
+   	gotoxy(i,24);printf(" º   [4] HIGHSCORE      º\n");
+   	gotoxy(i,25);printf(" º   [0] Exit            º\n");
+   	gotoxy(i,26);printf(" º                       º\n");
+   	gotoxy(i,27);printf(" ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼\n");
 	gotoxy(i,28);printf("    Choose :            \n");
    	gotoxy(41,28);scanf("%s",pilih_menu);
    	if(!cekInputInteger(pilih_menu)){
         gotoxy(i,30);printf("Input harus berupa integer");
         strcpy(pilih_menu,"99");
     }
-
    	switch(atoi(pilih_menu)){
 			case 1:
 				system("CLS");
@@ -291,7 +337,10 @@ void menu() //modul untuk menampilkan main menu dari program
                             case 2 : permainanKomputer(hard);break;
                             default: menu();gotoxy(i,27);printf("Menu tidak tersedia");break;
                         }
-                    case 2 : permainanPlayer();break;
+                    case 2 : system("cls");
+							 garis();
+							 nama_user();
+							 permainanPlayer();break;
                     default : menu();gotoxy(i,27);printf("Menu tidak tersedia");break;
                 }
 			break;
@@ -305,7 +354,10 @@ void menu() //modul untuk menampilkan main menu dari program
 				system("CLS");
 				aboutus();
 			break;
-
+			
+			case 4:
+				system("cls");
+				highscore();
 			case 0:
 				exit(1);
 			break;
@@ -725,7 +777,7 @@ void permainanPlayer()//modul yang berfungsi untuk menentukan dan mengatur jalan
 		tampilan_board(&board[0]);
 		if(giliran == O){
             warnateks(YELLOW);
-            printf("\n\n\t\t\t\tGiliran Player O ");
+            printf("\n\n\t\t\t\tGiliran %s ",player1);
 
             warnateks(WHITE);
 			no_kotak = input_permainan(&board[0]);
@@ -733,7 +785,7 @@ void permainanPlayer()//modul yang berfungsi untuk menentukan dan mengatur jalan
 			tampilan_board(&board[0]);
 		}else{
 		    warnateks(LIGHT_GREEN);
-            printf("\n\n\t\t\t\tGiliran Player X ");
+            printf("\n\n\t\t\t\tGiliran %s ",Name);
 
             warnateks(WHITE);
 			no_kotak = input_permainan(&board[0]);
@@ -756,10 +808,10 @@ void permainanPlayer()//modul yang berfungsi untuk menentukan dan mengatur jalan
 
             if(giliran == X){
                 warnateks(LIGHT_GREEN);
-                printf("\n\n\t\t\t\t Player X Menang!\n");
+                printf("\n\n\t\t\t\t %s Menang!\n",player1);//yang ini masih error-alya
             } else {
                 warnateks(YELLOW);
-                printf("\n\t\t\t\t    Player O Menang!\n\n");
+                printf("\n\t\t\t\t    %s Menang!\n\n",Name);
             }
 
 			warnateks(WHITE);
