@@ -1,3 +1,11 @@
+/* File 			: 1B_T138395759.cpp										        */
+/* Program			: Permainan Tic Tac Toe                     		            */
+/* Dibuat oleh		:   Alya Maharani P.J. / 181511038
+                        Atthoriq Gerhana F. / 181511039
+                        Muhammad Zaki Devara / 181511057
+                        Nadira Arrasya N. S. /181511059                             */
+/* Tanggal			: 4/3/2019	                                                    */
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -6,14 +14,11 @@
 #include<time.h>
 #include"warna.h"
 
-
-
 void menu();
 void permainanKomputer(int,char*);
 void permainanPlayer(char*,char*);
 bool cekInputRange(int,int,int);
 bool cekInputInteger(char*);
-
 
 void warnateks(int warna) //modul yang berfungsi untuk memberi warna ke karakter
 {
@@ -30,7 +35,6 @@ void inisialisasi(int *board) //modul untuk memberi nilai awal ke array board
 		board[i]=kosong;
 	}
 }
-
 
 void gotoxy(int x, int y) //modul untuk memfungsikan fungsi gotoxy
 {
